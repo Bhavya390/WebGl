@@ -28,10 +28,10 @@ $(function(){
 
 		var params = {color: "#1861b3" };
 		 cs="#1861b3";
-		 texture = new THREE.TextureLoader().load("images/crate.jpg");
+		/* texture = new THREE.TextureLoader().load("images/crate.jpg");
 		 texture.wrapS = THREE.RepeatWrapping;
 		 texture.wrapT = THREE.RepeatWrapping;
-		 texture.repeat.set(4,4);
+		 texture.repeat.set(4,4);*/
 
 
 		var updateColor = function  () {
@@ -57,7 +57,7 @@ $(function(){
 		}
 
 		textureControls = new function(){
-			this.Texture = 'Choose';
+			this.Texture = 'choose';
 		}
 		
 		var addtexture = function(){	
@@ -75,7 +75,7 @@ $(function(){
 	datGUI.add(textureControls,'Texture',['choose','blueFlower','bluewater','rainbow','crate']).onChange(addtexture);
 
   	floorGeometry = new THREE.PlaneGeometry(50,40);
-  	floorMaterial = new THREE.MeshBasicMaterial({map: texture});
+  	floorMaterial = new THREE.MeshBasicMaterial({color:'#849ab3'});
 	floor = new THREE.Mesh(floorGeometry,floorMaterial);
 	floor.material.side = THREE.DoubleSide;
 	floor.rotation.x = Math.PI/2;
@@ -83,7 +83,7 @@ $(function(){
 	floor.position.y = -10;
 
 	wallleftGeometry = new THREE.PlaneGeometry(40,30);
-	wallleftMaterial = new THREE.MeshBasicMaterial({map: texture});
+	wallleftMaterial = new THREE.MeshBasicMaterial({color:cs});
 	wallleft = new THREE.Mesh(wallleftGeometry,wallleftMaterial);
 	wallleft.material.side = THREE.DoubleSide;
 	wallleft.rotation.y = Math.PI/2;
@@ -94,7 +94,7 @@ $(function(){
 	wallright.position.x = 25;
 
 	backwallGeometry = new THREE.PlaneGeometry(50,30);
-	backwallMaterial = new THREE.MeshBasicMaterial({map : texture});
+	backwallMaterial = new THREE.MeshBasicMaterial({color:cs});
 	backwall = new THREE.Mesh(backwallGeometry,backwallMaterial);
 	backwall.material.side= THREE.DoubleSide;
 	backwall.position.z = -20;
@@ -125,7 +125,7 @@ $(function(){
     scene.remove(wallright);
     scene.remove(backwall);
 
-  	floorMaterial = new THREE.MeshBasicMaterial({color:'#8da4be',transparent:true, opacity:0.8});
+  	floorMaterial = new THREE.MeshBasicMaterial({color:'#849ab3'});
 	floor = new THREE.Mesh(floorGeometry,floorMaterial);
 	floor.material.side = THREE.DoubleSide;
 	floor.rotation.x = Math.PI/2;
@@ -148,7 +148,7 @@ $(function(){
 	backwall.position.z = -20;
 	backwall.position.y = 5;
 
-    scene.add(floor);
+   	scene.add(floor);
 	scene.add(wallleft);
 	scene.add(wallright);
 	scene.add(backwall);
