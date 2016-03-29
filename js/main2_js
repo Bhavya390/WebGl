@@ -1,0 +1,7 @@
+$(function(){
+	var scene = THREE.Scene();
+	var camera = THREE.PrespectiveCamera(45,window.innerWidth/window.innerHeight,1,1000);
+	var renderer = THREE.WebGLRenderer();
+	
+
+})

@@ -25,9 +25,114 @@ $(function(){
 
 	
   
-  
+var raycaster = new THREE.Raycaster();
+			var mouse = new THREE.Vector2(),
+			offset = new THREE.Vector3(),
+			INTERSECTED, SELECTED;
 
-    var params = {color: "#1861b3" };
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+				//
+
+				raycaster.setFromCamera( mouse, camera );
+
+				if ( SELECTED ) {
+
+					var intersects = raycaster.intersectObject( plane );
+
+					if ( intersects.length > 0 ) {
+
+						SELECTED.position.copy( intersects[ 0 ].point.sub( offset ) );
+
+					}
+
+					return;
+
+				}
+
+				var intersects = raycaster.intersectObjects( objects );
+
+				if ( intersects.length > 0 ) {
+
+					if ( INTERSECTED != intersects[ 0 ].object ) {
+
+						if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+
+						INTERSECTED = intersects[ 0 ].object;
+						INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+
+						plane.position.copy( INTERSECTED.position );
+						plane.lookAt( camera.position );
+
+					}
+
+					container.style.cursor = 'pointer';
+
+				} else {
+
+					if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+
+					INTERSECTED = null;
+
+					container.style.cursor = 'auto';
+
+				}
+
+			}
+
+			function onDocumentMouseDown( event ) {
+
+				event.preventDefault();
+
+				raycaster.setFromCamera( mouse, camera );
+
+				var intersects = raycaster.intersectObjects( objects );
+
+				if ( intersects.length > 0 ) {
+
+					controls.enabled = false;
+
+					SELECTED = intersects[ 0 ].object;
+
+					var intersects = raycaster.intersectObject( plane );
+
+					if ( intersects.length > 0 ) {
+
+						offset.copy( intersects[ 0 ].point ).sub( plane.position );
+
+					}
+
+					container.style.cursor = 'move';
+
+				}
+
+			}
+
+			function onDocumentMouseUp( event ) {
+
+				event.preventDefault();
+
+				controls.enabled = true;
+
+				if ( INTERSECTED ) {
+
+					plane.position.copy( INTERSECTED.position );
+
+					SELECTED = null;
+
+				}
+
+				container.style.cursor = 'auto';
+
+			}
+
+  
 	var guiControls = new function(){
 		this.rotationX = 0;
 		this.rotationY = 0;
@@ -41,31 +146,21 @@ $(function(){
 
 	
 	
-	var update = function  () {
-	   var colorObj = new THREE.Color( params.color );
-	   var hex = colorObj.getHexString();
-	   //document.getElementById("colors").innerHTML = hex;
-	   var cl = "0x"+hex;
-      $("#colors").html(cl);
-        console.log($("#colors").text());
-        //console.log(col+"s");
-	}
-	
 	var datGUI = new dat.GUI();
 	datGUI.add(guiControls,'rotationX',0,1);
 	datGUI.add(guiControls,'rotationY',0,1);
 	datGUI.add(guiControls,'rotationZ',0,1);
-	datGUI.addColor(params,'color').onChange(update);
+	
 	//datGUI.addColor(guiControls,'Color');
 	/*datGUI.add(guiControls,'positionX',-plane.scale.x/2,plane.scale.x/2);
 	datGUI.add(guiControls,'positionY',-plane.scale.y/2,plane.scale.y/2);
 	datGUI.add(guiControls,'positionZ',-plane.scale.z/2,plane.scale.z/2);*/
   
 	
-	
-	var cubeGeometry = new THREE.CubeGeometry(30,30,30);
+
+	var cubeGeometry = new THREE.CubeGeometry(10,10,10);
 	var cubeMaterials = [
-	new THREE.MeshBasicMaterial({color:$("#colors").text(), side: THREE.DoubleSide}),
+	new THREE.MeshBasicMaterial({color:0xdddddd,side: THREE.DoubleSide}),
 	new THREE.MeshBasicMaterial({color:0x0000ff , side: THREE.DoubleSide}),
 	new THREE.MeshBasicMaterial({color:0x873a59 , side: THREE.DoubleSide}),
 	new THREE.MeshBasicMaterial({color:0x0000ff , side: THREE.DoubleSide}),
@@ -77,6 +172,7 @@ $(function(){
 	cube.position.x = 0;
 	cube.position.y = 20;
 	cube.position.z = 0;	
+
 
 
 	/*var planeGeometry = new THREE.PlaneGeometry(1,1,1);
@@ -178,6 +274,7 @@ $(function(){
 		renderer.render(scene,camera);
 		controls.update();
 	}
+	
 
 	$("#webgl-container").append(renderer.domElement);
 	renderer.render(scene,camera);
